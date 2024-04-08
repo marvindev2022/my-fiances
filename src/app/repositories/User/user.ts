@@ -1,26 +1,25 @@
 import { User } from '@domain/User/User';
 import { DeleteUserDTO } from '@infra/http/dtos/User/deleteUser.dto';
-import { EditUserDTO } from '@infra/http/dtos/User/editUser.dto';
+import { UpdateUserDTO } from '@infra/http/dtos/User/editUser.dto';
 import { FindedUserDTO } from '@infra/http/dtos/User/findedUser.dto';
 import { UserLoginDTO } from '@infra/http/dtos/User/login.dto';
 import { NotFoundException } from '@nestjs/common';
-
 
 export abstract class UserRepository {
   abstract register(user: User): Promise<string>;
 
   abstract login(account: UserLoginDTO): Promise<any | Error>;
 
-  abstract edit(
+  abstract update(
     userId: string,
-    account: EditUserDTO,
+    account: UpdateUserDTO,
     photoFile?: Express.Multer.File,
   ): Promise<void | Error>;
 
   abstract findUserById(userId: string): Promise<User>;
 
-  abstract saveImage(id:string,photoUrl:string): Promise<any>;
-  
+  abstract saveImage(id: string, photoUrl: string): Promise<any>;
+
   abstract updatePassword(
     userId: string,
     newPassword: string,

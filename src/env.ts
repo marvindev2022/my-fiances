@@ -25,4 +25,5 @@ export default {
   MAILER_PASS: process.env.MAILER_PASS as string,
   MAILER_SENDER: process.env.MAILER_SENDER as string,
   FRONTEND_URL: process.env.FRONTEND_URL as string,
+  SUPABASE_KEY: process.env.SUPABASE_KEY as string,
 };

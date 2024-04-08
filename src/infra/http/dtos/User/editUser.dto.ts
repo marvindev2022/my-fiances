@@ -1,3 +1,3 @@
 import { RegisterUserDTO } from './registerUser.dto';
 
-export type EditUserDTO = Partial<RegisterUserDTO>;
+export type UpdateUserDTO = Partial<RegisterUserDTO>;

@@ -3,7 +3,7 @@ import { inMemoryUserRepository } from '@test/repositories/in-memory-user-reposi
 import { UserService } from './users.service';
 import { BadRequestException } from '@nestjs/common';
 
-describe('Edit user service', () => {
+describe('Update user service', () => {
   class PhoneValidatorMock {
     execute() {
       return 'valid_phone';
@@ -16,10 +16,7 @@ describe('Edit user service', () => {
   }
 
   const userRepository = new inMemoryUserRepository();
-  const userService = new UserService(
-    userRepository,
-    new PhoneValidatorMock(),
-  );
+  const userService = new UserService(userRepository, new PhoneValidatorMock());
 
   const makeSud = async () => {
     const newUser = new User({
@@ -32,7 +29,7 @@ describe('Edit user service', () => {
       address: {
         cep: 'any_cep',
         complement: 'any_complement',
-        number: 'any_number'
+        number: 'any_number',
       },
     });
 
@@ -53,12 +50,12 @@ describe('Edit user service', () => {
 
     await makeSud();
 
-    expect(await userService.edit(userId, user)).toEqual(
+    expect(await userService.update(userId, user)).toEqual(
       new BadRequestException('Identificação de usuário inválida'),
     );
   });
 
-  it('should edit existing user if identification is provided', async () => {
+  it('should update existing user if identification is provided', async () => {
     const userId = 'any_name';
     const user = {
       name: 'any',
@@ -66,7 +63,7 @@ describe('Edit user service', () => {
 
     await makeSud();
 
-    userService.edit(userId, user);
+    userService.update(userId, user);
 
     expect(userRepository.users[0].props.name).toEqual(user.name);
   });

@@ -4,7 +4,7 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
-import { UsersDatabaseModule } from '@infra/database/prisma/repositories/prisma-user-database.module';
+import { UsersDatabaseModule } from '@infra/database/prisma/repositories/User/prisma-user-database.module';
 import { UsersController } from './users.controller';
 import { UserService } from '@infra/http/services/users/users.service';
 import { PhoneValidator } from '@app/protocols/phone/phoneValidator';

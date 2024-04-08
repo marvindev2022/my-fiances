@@ -8,24 +8,17 @@ describe('User', () => {
       return 'valid_phone';
     }
   }
-  class CpfValidatorMock {
-    execute() {
-      return true;
-    }
-  }
 
   it('should register a new user', async () => {
     const userRepository = new inMemoryUserRepository();
     const userService = new UserService(
       userRepository,
       new PhoneValidatorMock(),
-      new CpfValidatorMock(),
     );
 
     const newUser = new User({
       name: 'any_name',
       email: 'any_email@mail.com',
-      cpf: '11111111111',
       birthDay: new Date(),
       photo: 'any_photo',
       password: 'any_password',

@@ -1,6 +1,5 @@
 import { sign } from 'jsonwebtoken';
-import { UploadedFile } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
+import { PrismaService } from '../../prisma.service';
 import { User } from '@domain/User/User';
 import {
   BadRequestException,
@@ -10,7 +9,7 @@ import {
 import { UserRepository } from '@app/repositories/User/user';
 import { UserLoginDTO } from '@infra/http/dtos/User/login.dto';
 import { compareToEncrypted } from '@app/protocols/crypto/compare/compareToEncrypted';
-import { EditUserDTO } from '@infra/http/dtos/User/editUser.dto';
+import { UpdateUserDTO } from '@infra/http/dtos/User/editUser.dto';
 
 import { FindedUserDTO } from '@infra/http/dtos/User/findedUser.dto';
 
@@ -75,7 +74,7 @@ export class PrismaUserRepository implements UserRepository {
     };
   }
 
-  async edit(userId: string, account: EditUserDTO): Promise<any | Error> {
+  async update(userId: string, account: UpdateUserDTO): Promise<any | Error> {
     if (!userId) {
       throw new BadRequestException('Identificação inválida');
     }
@@ -142,7 +141,6 @@ export class PrismaUserRepository implements UserRepository {
       include: {
         address: true,
       },
-      
     });
 
     if (!user) throw new BadRequestException('Usuário não encontrado');

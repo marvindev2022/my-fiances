@@ -9,15 +9,15 @@ import {
   Patch,
   Get,
   UseInterceptors,
-  UploadedFile
+  UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserService } from '@infra/http/services/users/users.service';
 import { MissingParamError } from '@app/errors/MissingParamError';
 import { RegisterUserDTO } from '@infra/http/dtos/User/registerUser.dto';
 import { UserLoginDTO } from '@infra/http/dtos/User/login.dto';
-import { EditUserDTO } from '@infra/http/dtos/User/editUser.dto';
-import { EditPasswordDTO } from '@infra/http/dtos/User/editPassword.dto';
+import { UpdateUserDTO } from '@infra/http/dtos/User/editUser.dto';
+import { UpdatePasswordDTO } from '@infra/http/dtos/User/editPassword.dto';
 import { ResetPasswordDTO } from '@infra/http/dtos/User/resetPassword.dto';
 import { DeleteUserDTO } from '@infra/http/dtos/User/deleteUser.dto';
 
@@ -27,8 +27,10 @@ export class UsersController {
 
   @Post('registro')
   async register(@Body() registerUserDTO: RegisterUserDTO) {
-    const id = await this.userService.register({...registerUserDTO, birthDay: new Date(registerUserDTO.birthDay)});
-    console.log(id)
+    const id = await this.userService.register({
+      ...registerUserDTO,
+      birthDay: new Date(registerUserDTO.birthDay),
+    });
     if (id instanceof Error) throw new BadRequestException(id.message);
 
     return { message: 'Usuário cadastrado com sucesso!' };
@@ -53,33 +55,40 @@ export class UsersController {
   }
 
   @Get(':id/buscar')
-  async findUserById(@Param('id') id:string){
-  const user = await this.userService.findUsers(id)
-  return user
-}
+  async findUserById(@Param('id') id: string) {
+    const user = await this.userService.findUsers(id);
+    return user;
+  }
   @Patch(':id/deletar')
-  async deleteUserById(@Body() request:DeleteUserDTO, @Param('id') id:string){
-   await this.userService.deleteUser(request,id)
-  return "Usuario deletado!"
-}
-
-@Put(':id')
-@UseInterceptors(FileInterceptor('photo'))
-async edit(@Param('id') id: string, @Body() editUserDTO: EditUserDTO, @UploadedFile() photoFile: Express.Multer.File) {
-  if (photoFile) {
-    const imagePath = `uploads/${photoFile.filename}`;
-    editUserDTO.photo = imagePath;
+  async deleteUserById(
+    @Body() request: DeleteUserDTO,
+    @Param('id') id: string,
+  ) {
+    await this.userService.deleteUser(request, id);
+    return 'Usuario deletado!';
   }
 
-  await this.userService.edit(id, editUserDTO);
+  @Put(':id')
+  @UseInterceptors(FileInterceptor('photo'))
+  async update(
+    @Param('id') id: string,
+    @Body() editUserDTO: UpdateUserDTO,
+    @UploadedFile() photoFile: Express.Multer.File,
+  ) {
+    if (photoFile) {
+      const imagePath = `uploads/${photoFile.filename}`;
+      editUserDTO.photo = imagePath;
+    }
 
-  return 'Dados editados com sucesso!';
-}
+    await this.userService.update(id, editUserDTO);
+
+    return 'Dados editados com sucesso!';
+  }
 
   @Patch(':id/editar-senha')
   async editPassword(
     @Param('id') id: string,
-    @Body() request: EditPasswordDTO,
+    @Body() request: UpdatePasswordDTO,
   ): Promise<string | void> {
     await this.userService.editPassword(id, request);
   }

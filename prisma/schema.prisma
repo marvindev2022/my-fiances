@@ -33,8 +33,10 @@ model Income {
   description String?
   amount      Float
   date        DateTime
+  createdAt   DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id])
   userId      String
+  cash        Cash[]   @relation("cashIn")
 }
 
 model Expense {
@@ -42,8 +44,19 @@ model Expense {
   description String?
   amount      Float
   date        DateTime
+  createdAt   DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id])
   userId      String
+  cash        Cash[]   @relation("cashOut")
+}
+
+model Cash {
+  id      String    @id @default(uuid())
+  amount  Float     @default(0) @map("amount")
+  user    User      @relation(fields: [userId], references: [id])
+  userId  String    @unique
+  income  Income[]  @relation("cashIn")
+  expense Expense[] @relation("cashOut")
 }
 
 model Address {
@@ -185,11 +198,4 @@ model InvestmentCategory {
   id          String       @id @default(uuid())
   name        String
   investments Investment[]
-}
-
-model Cash {
-  id     String @id @default(uuid())
-  amount Float  @default(0) @map("amount")
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @unique
 }

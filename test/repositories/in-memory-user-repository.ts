@@ -1,7 +1,7 @@
 import { UserRepository } from '@app/repositories/User/user';
 import { User } from '@domain/User/User';
 import { DeleteUserDTO } from '@infra/http/dtos/User/deleteUser.dto';
-import { EditUserDTO } from '@infra/http/dtos/User/editUser.dto';
+import { UpdateUserDTO } from '@infra/http/dtos/User/editUser.dto';
 import { FindedUserDTO } from '@infra/http/dtos/User/findedUser.dto';
 import { UserLoginDTO } from '@infra/http/dtos/User/login.dto';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
@@ -15,7 +15,7 @@ export class inMemoryUserRepository implements UserRepository {
     return 'valid_id';
   }
 
-  async login(account: UserLoginDTO): Promise<number| Error> {
+  async login(account: UserLoginDTO): Promise<number | Error> {
     const userIndex = this.users.findIndex(
       (user) => user.props.email === account.email,
     );
@@ -30,7 +30,7 @@ export class inMemoryUserRepository implements UserRepository {
     return userIndex;
   }
 
-  async edit(userId: string, user: EditUserDTO): Promise<void | Error> {
+  async update(userId: string, user: UpdateUserDTO): Promise<void | Error> {
     if (!userId) {
       return new BadRequestException('Invalid user identification');
     }
@@ -73,8 +73,10 @@ export class inMemoryUserRepository implements UserRepository {
     return user;
   }
 
-
-  async updatePassword(userId: string, newPassword: string): Promise<User | boolean> {
+  async updatePassword(
+    userId: string,
+    newPassword: string,
+  ): Promise<User | boolean> {
     if (!this.users[userId]) {
       throw new Error('User not found');
     }
@@ -100,7 +102,7 @@ export class inMemoryUserRepository implements UserRepository {
       ...user,
     };
   }
-  async deleteUser(request:DeleteUserDTO, id: string): Promise<void> {
+  async deleteUser(request: DeleteUserDTO, id: string): Promise<void> {
     const userIndex = this.users.findIndex((user) => user.props.name === id);
 
     if (userIndex < 0) {

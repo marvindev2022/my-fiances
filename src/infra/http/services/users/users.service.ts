@@ -5,14 +5,13 @@ import {
 } from '@nestjs/common';
 import { UserRepository } from '@app/repositories/User/user';
 import { User } from '@domain/User/User';
-import { CpfValidator } from '@app/protocols/cpf/cpfValidator';
 import { PhoneValidator } from '@app/protocols/phone/phoneValidator';
 import { InvalidParamError } from '@app/errors/InvalidParamError';
 import { UserLoginDTO } from '@infra/http/dtos/User/login.dto';
-import { EditUserDTO } from '@infra/http/dtos/User/editUser.dto';
+import { UpdateUserDTO } from '@infra/http/dtos/User/editUser.dto';
 import { RegisterUserDTO } from '@infra/http/dtos/User/registerUser.dto';
 import { ResetPasswordDTO } from '@infra/http/dtos/User/resetPassword.dto';
-import { EditPasswordDTO } from '@infra/http/dtos/User/editPassword.dto';
+import { UpdatePasswordDTO } from '@infra/http/dtos/User/editPassword.dto';
 import { EmailValidationResponseDTO } from '@infra/http/dtos/User/emailValidationResponse.dto';
 import { z } from 'zod';
 import { sign } from 'jsonwebtoken';
@@ -27,7 +26,6 @@ export class UserService {
 
   async register(request: RegisterUserDTO): Promise<User | Error> {
     const newUser = new User(request);
- console.log(newUser)
     const phoneIsValid = this.phoneValidator.execute(
       newUser.props?.phone as string,
     );
@@ -78,17 +76,17 @@ export class UserService {
     return removeSensitiveData(user);
   }
 
-  async edit(userId: string, request: EditUserDTO): Promise<void | Error> {
+  async update(userId: string, request: UpdateUserDTO): Promise<void | Error> {
     if (!userId) {
       return new BadRequestException('Identificação de usuário inválida!');
     }
     if (request && Number(request.password?.length) < 6)
       throw new BadRequestException('Senha deve ter pelo menos 6 caracteres!');
 
-    const editionGoneWrong = await this.userRepository.edit(userId, request);
+    const updatingGoneWrong = await this.userRepository.update(userId, request);
 
-    if (editionGoneWrong instanceof Error) {
-      return editionGoneWrong;
+    if (updatingGoneWrong instanceof Error) {
+      return updatingGoneWrong;
     }
   }
 
@@ -105,7 +103,7 @@ export class UserService {
 
   async editPassword(
     userId: string,
-    request: EditPasswordDTO,
+    request: UpdatePasswordDTO,
   ): Promise<string> {
     if (!userId) {
       throw new BadRequestException('Identificação de usuário inválida');
